@@ -32,10 +32,7 @@ public class HandlerConfig<T> extends AbstractContext implements Configuable {
 
 	private HandlerConfig() {
 	}
-
-	/**
-	 * 
-	 */
+ 
 	public HandlerConfig<T> config() {
 		return new HandlerConfig<T>();
 	}

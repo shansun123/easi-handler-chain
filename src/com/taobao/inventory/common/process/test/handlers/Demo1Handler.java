@@ -19,7 +19,7 @@ public class Demo1Handler extends AbstractHandler<String> {
 	}
 
 	@Override
-	public void handle(String param, HandleResult result) {
+	public void bizHandle(String param, HandleResult result) {
 		System.err.println("In Demo1 Handler, param=" + param); 
 		result.setSuccess(true);
 	}

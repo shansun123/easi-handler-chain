@@ -182,14 +182,14 @@ public class HandlerChain<T> implements Appendable<T> {
 		public boolean canHandle(T param) {
 			return false;
 		}
-
-		@Override
-		public void handle(T param, HandleResult result) {
-		}
-
+ 
 		@Override
 		public HandlerConfig<T> getConfig() {
 			return null;
+		}
+
+		@Override
+		public void bizHandle(T param, HandleResult result) {
 		}
 	};
 }

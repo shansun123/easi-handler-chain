@@ -11,8 +11,11 @@ import com.taobao.inventory.common.process.appender.Appendable;
 import com.taobao.inventory.common.process.interceptor.HandlerInterceptor;
 
 /**
+ * <pre>
+ * 组装多个处理节点，可以理解为启动一条子链。
+ * </pre>
+ * 
  * @author Chris
- *
  */
 public abstract class CompositeHandler<T> extends AbstractHandler<T> implements Appendable<T> {
  
@@ -26,7 +29,7 @@ public abstract class CompositeHandler<T> extends AbstractHandler<T> implements 
 			}
 		}
 	}
-
+	
 	@Override
 	public Appendable<T> appendHandler(Handler<T> handler) {
 		handlers.add(handler);
@@ -42,6 +45,9 @@ public abstract class CompositeHandler<T> extends AbstractHandler<T> implements 
 	public Appendable<T> appendInterceptor(HandlerInterceptor<T> interceptor) {
 		throw new UnsupportedOperationException("Unsupported right now, u can implement the method, if in need!");
 	}
-	
 
+	@Override
+	public void bizHandle(T param, HandleResult result) {
+		// DO NOTHING
+	}
 }

@@ -7,6 +7,8 @@ import com.taobao.inventory.common.process.HandleResult;
 import com.taobao.inventory.common.process.handler.Handler;
 
 /**
+ * 处理节点拦截器
+ * 
  * @author Chris
  */
 public interface HandlerInterceptor<T> {
