@@ -6,19 +6,36 @@ package com.taobao.inventory.common.process.config;
 import com.taobao.inventory.common.process.context.AbstractContext;
 
 /**
- * @author Chris
+ * <pre>
+ * 处理节点的配置信息，如可以设置是否忽略异常等
+ * </pre>
  * 
+ * 除已定义的配置项外，还可以自定义配置，通过{@link HandlerConfig#put(String, Object)}设置。
+ * 
+ * @author Chris
  */
 public class HandlerConfig<T> extends AbstractContext implements Configuable {
+	/**
+	 * 是否忽略该节点异常，默认不忽略
+	 */
 	private boolean ignoreException = false;
 	
+	/**
+	 * 是否拒绝拦截器监视，默认不拒绝
+	 */
 	private boolean refuseInterceptor = false;
 
+	/**
+	 * 全局默认节点配置
+	 */
 	static private HandlerConfig<Object> DEFAULT_CONFIG = new HandlerConfig<Object>();
 
 	private HandlerConfig() {
 	}
 
+	/**
+	 * 
+	 */
 	public HandlerConfig<T> config() {
 		return new HandlerConfig<T>();
 	}
