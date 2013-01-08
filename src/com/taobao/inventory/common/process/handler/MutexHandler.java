@@ -7,12 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.taobao.inventory.common.process.HandleResult;
-
+import com.taobao.inventory.common.process.appender.Appendable;
 /**
  * @author Chris
  * 
  */
-public abstract class MutexHandler<T> implements Handler<T> {
+public abstract class MutexHandler<T> extends AbstractHandler<T> implements Appendable<T> {
 	private List<Handler<T>> handlers = new ArrayList<Handler<T>>();
 
 	@Override

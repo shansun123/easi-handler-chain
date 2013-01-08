@@ -5,13 +5,13 @@ package com.taobao.inventory.common.process.test.handlers;
 
 import com.taobao.inventory.common.process.HandleResult;
 import com.taobao.inventory.common.process.config.HandlerConfig;
-import com.taobao.inventory.common.process.handler.Handler;
+import com.taobao.inventory.common.process.handler.AbstractHandler;
 
 /**
  * @author Chris
  *
  */
-public class Demo2Handler implements Handler<String> {
+public class Demo2Handler extends AbstractHandler<String> {
 
 	@Override
 	public boolean canHandle(String param) {
@@ -20,7 +20,7 @@ public class Demo2Handler implements Handler<String> {
 
 	@Override
 	public void handle(String param, HandleResult result) {
-		System.out.println("In Demo2 Handler, param=" + param); 
+		System.err.println("In Demo2 Handler, param=" + param); 
 		result.setSuccess(true);
 	}
 

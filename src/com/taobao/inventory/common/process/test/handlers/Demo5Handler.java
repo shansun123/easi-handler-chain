@@ -11,7 +11,7 @@ import com.taobao.inventory.common.process.handler.AbstractHandler;
  * @author Chris
  *
  */
-public class Demo1Handler extends AbstractHandler<String> {
+public class Demo5Handler extends AbstractHandler<String> {
 
 	@Override
 	public boolean canHandle(String param) {
@@ -20,7 +20,7 @@ public class Demo1Handler extends AbstractHandler<String> {
 
 	@Override
 	public void handle(String param, HandleResult result) {
-		System.err.println("In Demo1 Handler, param=" + param); 
+		System.err.println("In Demo5 Handler, param=" + param); 
 		result.setSuccess(true);
 	}
 

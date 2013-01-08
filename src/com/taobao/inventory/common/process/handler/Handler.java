@@ -15,5 +15,9 @@ public interface Handler<T> {
 
 	void handle(T param, HandleResult result);
 
+	Handler<T> successor();
+	
+	Handler<T> successor(Handler<T> successor);
+	
 	HandlerConfig<T> getConfig();
 }

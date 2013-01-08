@@ -14,7 +14,7 @@ import com.taobao.inventory.common.process.interceptor.HandlerInterceptor;
  * @author Chris
  *
  */
-public abstract class CompositeHandler<T> implements Handler<T>, Appendable<T> {
+public abstract class CompositeHandler<T> extends AbstractHandler<T> implements Appendable<T> {
  
 	private List<Handler<T>> handlers = new ArrayList<Handler<T>>();
 	
@@ -34,7 +34,14 @@ public abstract class CompositeHandler<T> implements Handler<T>, Appendable<T> {
 	}
 
 	@Override
+	public Appendable<T> appendHandler(Handler<T> handler, Handler<T> successor) {
+		throw new UnsupportedOperationException("Unsupported right now, u can implement the method, if in need!");
+	}
+	
+	@Override
 	public Appendable<T> appendInterceptor(HandlerInterceptor<T> interceptor) {
 		throw new UnsupportedOperationException("Unsupported right now, u can implement the method, if in need!");
 	}
+	
+
 }

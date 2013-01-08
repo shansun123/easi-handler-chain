@@ -11,6 +11,7 @@ import com.taobao.inventory.common.process.appender.Appendable;
 import com.taobao.inventory.common.process.config.HandlerChainConfig;
 import com.taobao.inventory.common.process.config.HandlerConfig;
 import com.taobao.inventory.common.process.exception.HandleException;
+import com.taobao.inventory.common.process.handler.AbstractHandler;
 import com.taobao.inventory.common.process.handler.Handler;
 import com.taobao.inventory.common.process.interceptor.HandlerInterceptor;
 
@@ -44,17 +45,17 @@ public class HandlerChain<T> implements Appendable<T> {
 				}
 
 				try {
-					intercept(param, result, handlerConfig, Location.BEFORE);
+					intercept(param, currentHandler, result, handlerConfig, Location.BEFORE);
 
 					currentHandler.handle(param, result);
 
-					intercept(param, result, handlerConfig, Location.AFTER);
+					intercept(param, currentHandler, result, handlerConfig, Location.AFTER);
 					
 					if (cfg.isStopOnFailure() && !result.success) {
 						break;
 					}
 				} catch (Throwable e) {
-					intercept(param, result, handlerConfig, Location.EXCEPTION);
+					intercept(param, currentHandler, result, handlerConfig, Location.EXCEPTION);
 
 					if (handlerConfig.isIgnoreException()) {
 						continue;
@@ -67,7 +68,7 @@ public class HandlerChain<T> implements Appendable<T> {
 						result.exceptions.add(e);
 					}
 				} finally {
-					intercept(param, result, handlerConfig, Location.FINAL);
+					intercept(param, currentHandler, result, handlerConfig, Location.FINAL);
 				}
 			}
 		}
@@ -83,18 +84,16 @@ public class HandlerChain<T> implements Appendable<T> {
 		if (currentHandler == null) {
 			return chain.get(0);
 		}
-
-		HandlerConfig<T> config = currentHandler.getConfig();
-
-		if (config != null && config.getSuccessor() != null) {
-			int succIndex = chain.indexOf(config.getSuccessor());
+ 
+		if (currentHandler != null && currentHandler.successor() != null) {
+			int succIndex = chain.indexOf(currentHandler.successor());
 
 			HandlerAssert.assertTrue(succIndex >= 0,
-					"successor [{0}] of [{1}] not found in the chain!", config
-							.getSuccessor().getClass().getSimpleName(), config
+					"successor [{0}] of [{1}] not found in the chain!", currentHandler
+							.successor().getClass().getSimpleName(), currentHandler
 							.getClass().getSimpleName());
 
-			return config.getSuccessor();
+			return currentHandler.successor();
 		}
 
 		int currIndex = chain.indexOf(currentHandler);
@@ -105,9 +104,9 @@ public class HandlerChain<T> implements Appendable<T> {
 		// 已经完成
 		if (currIndex == chain.size() - 1) {
 			return null;
+		} else {
+			return chain.get(currIndex + 1);
 		}
-
-		return null;
 	}
 
 	public boolean canHandle(T param) {
@@ -121,12 +120,17 @@ public class HandlerChain<T> implements Appendable<T> {
 	}
 
 	@Override
+	public Appendable<T> appendHandler(Handler<T> handler, Handler<T> successor) {
+		return appendHandler(handler.successor(successor));
+	}
+	
+	@Override
 	public Appendable<T> appendInterceptor(HandlerInterceptor<T> interceptor) {
 		interceptors.add(interceptor);
 		return this;
 	}
 
-	private void intercept(T param, HandleResult result, HandlerConfig<Object> config, Location loc) {
+	private void intercept(T param, Handler<T> handler, HandleResult result, HandlerConfig<Object> config, Location loc) {
 		if (config.isRefuseInterceptor()) {
 			return;
 		}
@@ -134,16 +138,16 @@ public class HandlerChain<T> implements Appendable<T> {
 		for (HandlerInterceptor<T> hi : interceptors) {
 			switch (loc) {
 			case BEFORE:
-				hi.beforeHandle(param, result);
+				hi.beforeHandle(param, handler, result);
 				break;
 			case AFTER:
-				hi.afterHandle(param, result);
+				hi.afterHandle(param, handler, result);
 				break;
 			case EXCEPTION:
-				hi.errorHandle(param, result);
+				hi.errorHandle(param, handler, result);
 				break;
 			case FINAL:
-				hi.finalHandle(param, result);
+				hi.finalHandle(param, handler, result);
 				break;
 			default:
 				break;
@@ -173,7 +177,7 @@ public class HandlerChain<T> implements Appendable<T> {
 		}
 	}
 
-	final Handler<T> NULL_HANDLER = new Handler<T>() {
+	final Handler<T> NULL_HANDLER = new AbstractHandler<T>() {
 		@Override
 		public boolean canHandle(T param) {
 			return false;
@@ -188,10 +192,4 @@ public class HandlerChain<T> implements Appendable<T> {
 			return null;
 		}
 	};
-
-	@Override
-	public Appendable<T> appendHandler(Handler<T> handler, Handler<T> successor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
